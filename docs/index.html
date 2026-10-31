@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Process Dashboard · Theo dõi &amp; phân tích quy trình</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Ctext x='32' y='44' font-family='Segoe UI,Arial' font-size='27' font-weight='700' fill='white' text-anchor='middle'%3EPD%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="static/css/app.css">
+  <script src="static/vendor/plotly.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">PD</div>
+      <div class="brand-text">
+        <strong>Process Dashboard</strong>
+        <span>ERP · Process Mining</span>
+      </div>
+    </div>
+
+    <div class="nav-title">Giám sát</div>
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-tab="overview">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13h4v8H3zM10 3h4v18h-4zM17 9h4v12h-4z" stroke-linecap="round"/></svg>
+        Tổng quan
+      </button>
+      <button class="nav-item" data-tab="tracking">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2" stroke-linecap="round"/></svg>
+        Theo dõi vận hành
+      </button>
+      <button class="nav-item" data-tab="alerts">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4l8.5 15H3.5z" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke-linecap="round"/></svg>
+        Cảnh báo
+        <span class="count" id="navAlertCount" style="display:none">0</span>
+      </button>
+
+      <div class="nav-title">Phân tích</div>
+      <button class="nav-item" data-tab="process">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="6" r="2.5"/><circle cx="19" cy="6" r="2.5"/><circle cx="5" cy="18" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="M7.5 6h9M5 8.5v7M19 8.5v7M7.5 18h9" stroke-linecap="round"/></svg>
+        Quy trình &amp; tuân thủ
+      </button>
+      <button class="nav-item" data-tab="resources">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5" stroke-linecap="round"/><path d="M16 5.5a3 3 0 010 5.6M18 20c0-2.2-.8-3.9-2-5" stroke-linecap="round"/></svg>
+        Nguồn lực &amp; bàn giao
+      </button>
+    </nav>
+
+    <div class="sidebar-foot" id="sourceInfo">Đang tải dữ liệu…</div>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="loading" id="loading"><div class="spinner"></div></div>
+
+    <div class="controlbar">
+      <div class="control-group">
+        <span class="control-label">Bộ dữ liệu</span>
+        <div class="segmented" id="sourceSwitch"></div>
+      </div>
+
+      <div class="timeline-control">
+        <span class="control-label">Thời điểm</span>
+        <input type="range" id="asOfRange" min="0" max="1000" value="1000">
+        <span class="asof-readout" id="asOfReadout">—</span>
+      </div>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1 id="pageTitle">Tổng quan quy trình</h1>
+        <p id="pageSub">Chọn một bộ dữ liệu để bắt đầu.</p>
+      </div>
+      <div class="control-group" id="presets"></div>
+    </div>
+
+    <div class="content">
+      <!-- ============================ TỔNG QUAN ============================ -->
+      <section class="tab-panel active" id="tab-overview">
+        <div class="grid grid-4" id="kpiGrid"></div>
+
+        <div class="grid grid-side" style="margin-top:16px">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Dòng sự kiện theo thời gian</h3>
+                <p id="dailyHint">Số bước ghi nhận, số ca mở mới và số ca kết thúc</p>
+              </div>
+            </div>
+            <div class="card-body"><div id="chartDaily" class="chart"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Cơ cấu trạng thái ca</h3>
+                <p>Tại thời điểm quan sát</p>
+              </div>
+            </div>
+            <div class="card-body"><div id="chartStatus" class="chart"></div></div>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:16px">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Phân bố thời gian chu kỳ</h3>
+                <p>Chỉ tính các ca đã kết thúc</p>
+              </div>
+            </div>
+            <div class="card-body"><div id="chartCycle" class="chart"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Tỷ lệ đúng hạn theo bước</h3>
+                <p>Sắp xếp theo mức độ quá hạn</p>
+              </div>
+            </div>
+            <div class="card-body"><div id="chartActivity" class="chart"></div></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-head">
+            <div>
+              <h3>Bảng điểm các bước</h3>
+              <p>Định mức, thực tế và mức độ quá hạn của từng hoạt động</p>
+            </div>
+          </div>
+          <div class="card-body"><div id="activityTable"></div></div>
+        </div>
+      </section>
+
+      <!-- ============================ THEO DÕI ============================ -->
+      <section class="tab-panel" id="tab-tracking">
+        <div class="card">
+          <div class="filter-bar">
+            <select id="filterStatus">
+              <option value="">Mọi trạng thái</option>
+              <option value="Đang mở">Đang mở</option>
+              <option value="Hoàn thành">Hoàn thành</option>
+              <option value="Bị từ chối">Bị từ chối</option>
+            </select>
+            <select id="filterResource"><option value="">Mọi nguồn lực</option></select>
+            <input type="search" id="filterSearch" placeholder="Tìm mã ca…">
+            <label class="check"><input type="checkbox" id="filterLate"> Chỉ ca có bước quá hạn</label>
+            <button class="btn ghost" id="filterReset">Xoá lọc</button>
+            <span class="pill" id="caseCount" style="margin-left:auto"></span>
+          </div>
+          <div class="card-body" style="padding-top:12px">
+            <div id="caseTable"></div>
+            <div id="caseMore" style="margin-top:12px;text-align:center"></div>
+          </div>
+        </div>
+
+        <div class="note" style="margin-top:14px">
+          <span class="ico">ⓘ</span>
+          <div>Bấm vào một dòng để xem dòng thời gian chi tiết của ca đó. Kéo thanh <b>Thời điểm</b> ở trên để tua lại quá trình và xem ca nào đang tồn đọng.</div>
+        </div>
+      </section>
+
+      <!-- ============================ QUY TRÌNH ============================ -->
+      <section class="tab-panel" id="tab-process">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Mô hình quy trình khai phá từ dữ liệu (DFG)</h3>
+              <p id="dfgHint">Luồng trực tiếp giữa các bước — độ dày tỷ lệ với số lần chuyển</p>
+            </div>
+            <div class="legend-row">
+              <span><i style="background:#4f46e5"></i>Đúng mô hình</span>
+              <span><i style="background:#f04438"></i>Lệch mô hình</span>
+            </div>
+          </div>
+          <div class="card-body"><div id="chartDfg" class="chart tall"></div></div>
+        </div>
+
+        <div class="stat-strip" id="conformanceStrip" style="margin-top:16px"></div>
+
+        <div class="grid grid-2" style="margin-top:16px">
+          <div class="card">
+            <div class="card-head"><div><h3>Luồng chuyển tiếp</h3><p>Sắp xếp theo tần suất</p></div></div>
+            <div class="card-body"><div id="edgeTable"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h3>Biến thể quy trình</h3><p>Các đường đi phổ biến nhất</p></div></div>
+            <div class="card-body"><div id="variantTable"></div></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-head">
+            <div><h3>Luồng chuyển tiếp lệch quy trình</h3><p id="modelSource"></p></div>
+          </div>
+          <div class="card-body"><div id="deviationList"></div></div>
+        </div>
+      </section>
+
+      <!-- ============================ NGUỒN LỰC ============================ -->
+      <section class="tab-panel" id="tab-resources">
+        <div class="grid grid-side">
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Mạng bàn giao công việc</h3><p id="handoverHint">Ai chuyển việc cho ai</p></div>
+            </div>
+            <div class="card-body"><div id="chartNetwork" class="chart tall"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Xếp hạng mức độ quan trọng</h3><p>Điểm tổng hợp từ 4 độ đo centrality</p></div>
+            </div>
+            <div class="card-body"><div id="centralityTable"></div></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-head">
+            <div><h3>Hiệu suất theo nguồn lực</h3><p>Số bước, số ca tham gia và tỷ lệ đúng hạn</p></div>
+          </div>
+          <div class="card-body"><div id="resourceTable"></div></div>
+        </div>
+      </section>
+
+      <!-- ============================ CẢNH BÁO ============================ -->
+      <section class="tab-panel" id="tab-alerts">
+        <div class="stat-strip" id="alertStrip"></div>
+        <div class="card" style="margin-top:16px">
+          <div class="filter-bar">
+            <div class="segmented" id="alertFilter">
+              <button class="active" data-sev="">Tất cả</button>
+              <button data-sev="high">Nghiêm trọng</button>
+              <button data-sev="medium">Trung bình</button>
+              <button data-sev="low">Thấp</button>
+            </div>
+            <span class="pill" id="alertCount" style="margin-left:auto"></span>
+          </div>
+          <div class="card-body">
+            <div class="alert-list" id="alertList"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <h2 id="drawerTitle">—</h2>
+      <div class="sub" id="drawerSub"></div>
+    </div>
+    <button class="close-btn" id="drawerClose" aria-label="Đóng">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>window.__STATIC__ = true;</script>
+<script src="static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Thư viện biểu đồ trong mã nguồn: bản dùng cho site nằm ở docs/static/vendor/
+app/static/vendor/plotly.min.js
+
+# Hệ điều hành
+Thumbs.db
+.DS_Store
