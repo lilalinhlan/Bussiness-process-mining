@@ -1,8 +1,6 @@
 # Process Dashboard — Theo dõi & phân tích quy trình nghiệp vụ
 
-Bản demo giao diện **process mining** dựng từ event log thật và event log bài tập:
-giám sát vận hành (ca đang mở, tồn đọng, quá hạn), khai phá quy trình (DFG, biến thể,
-tuân thủ) và phân tích nguồn lực (mạng bàn giao, centrality).
+Bản demo giao diện **process mining** dựng từ dữ liệu event log thật và event log bài tập
 
 ### ▶ [Mở bản demo](https://lilalinhlan.github.io/Bussiness-process-mining/)
 
@@ -18,7 +16,7 @@ tuân thủ) và phân tích nguồn lực (mạng bàn giao, centrality).
 | **Quy trình & tuân thủ** | DFG (Sankey) khai phá từ dữ liệu, luồng chuyển tiếp, top biến thể, mức khớp với quy trình chuẩn và các luồng lệch |
 | **Nguồn lực & bàn giao** | Mạng bàn giao (mũi tên chỉ chiều chuyển việc), xếp hạng centrality (degree / betweenness / closeness / PageRank), hiệu suất từng người |
 
-**Cỗ máy thời gian**: thanh *Thời điểm* cho phép tua về bất kỳ mốc nào trong khoảng dữ liệu
+**Theo dõi theo thời gian**: thanh *Thời điểm* cho phép tua về bất kỳ mốc nào trong khoảng dữ liệu
 và xem quy trình đúng như nó đang diễn ra lúc đó — ca nào đang mở, kẹt ở bước nào, bao nhiêu ca trễ hạn.
 Bốn mốc nhanh: **Đầu kỳ · Đỉnh tồn đọng · Giữa kỳ · Cuối kỳ**.
 
