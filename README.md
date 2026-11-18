@@ -25,8 +25,8 @@ Bốn mốc nhanh: **Đầu kỳ · Đỉnh tồn đọng · Giữa kỳ · Cu�
 | Nguồn | Quy mô | Đơn vị thời gian | Định mức |
 |---|---|---|---|
 | Ticket CSKH (bài tập, BPMN Agent–Supervisor) | 30 ca · 180 bước · 5 nhân sự | phút | Bảng Standard Time của quy trình |
-| Jira Bug (TI) | 161 issue · 875 lần đổi trạng thái | ngày làm việc | Phân vị 75 thời gian lưu lại mỗi trạng thái |
-| Jira Story (TI) | 182 issue · 734 lần đổi trạng thái | ngày làm việc | như trên |
+| Jira Bug (TI) https://zenodo.org/records/8275679| 161 issue · 875 lần đổi trạng thái | ngày làm việc | Phân vị 75 thời gian lưu lại mỗi trạng thái |
+| Jira Story (TI) https://zenodo.org/records/8275679| 182 issue · 734 lần đổi trạng thái | ngày làm việc | như trên |
 | Helpdesk (event log công khai 2010–2014) | 4.580 ca · 21.348 sự kiện · 22 nhân viên | ngày | như trên |
 
 Hai nguồn Jira có **quy trình chuẩn** để đối chiếu (mô hình Bug). Story và Helpdesk chưa có
